@@ -31,10 +31,12 @@ app.post("/products", requireAdmin, async (req, res) => {
   }
 });
 
-// GET /products?category=Electronics&minPrice=10&maxPrice=100
+// GET /products?category=Electronics&minPrice=10&maxPrice=100&page=1&limit=10
 app.get("/products", async (req, res) => {
   try {
-    const { category, minPrice, maxPrice } = req.query;
+    const { category, minPrice, maxPrice, page, limit } = req.query;
+    const take = limit ? Number(limit) : 10;
+    const skip = page ? (Number(page) - 1) * take : 0;
     const products = await prisma.product.findMany({
       where: {
         price: {
@@ -44,6 +46,8 @@ app.get("/products", async (req, res) => {
         categories: category ? { some: { name: { equals: String(category) } } } : undefined,
       },
       include: { categories: true },
+      skip,
+      take,
     });
     res.json(products);
   } catch (error) {
