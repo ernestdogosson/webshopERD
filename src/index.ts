@@ -8,6 +8,7 @@ const prisma = new PrismaClient({ adapter });
 const app = express();
 
 app.use(express.json());
+app.use(express.static("public"));
 
 function requireAdmin(req: express.Request, res: express.Response, next: express.NextFunction) {
   if (req.headers["x-api-key"] !== process.env.ADMIN_API_KEY) {
