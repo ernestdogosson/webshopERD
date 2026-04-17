@@ -9,12 +9,20 @@ const app = express();
 
 app.use(express.json());
 
+function requireAdmin(req: express.Request, res: express.Response, next: express.NextFunction) {
+  if (req.headers["x-api-key"] !== process.env.ADMIN_API_KEY) {
+    res.status(401).json({ error: "Unauthorized" });
+    return;
+  }
+  next();
+}
+
 app.get("/", (_req, res) => {
   res.json({ message: "Webshop API is running." });
 });
 
 // POST /products
-app.post("/products", async (req, res) => {
+app.post("/products", requireAdmin, async (req, res) => {
   try {
     const product = await prisma.product.create({ data: req.body });
     res.json(product);
@@ -44,7 +52,7 @@ app.get("/products", async (req, res) => {
 });
 
 // PATCH /products/:productId
-app.patch("/products/:productId", async (req, res) => {
+app.patch("/products/:productId", requireAdmin, async (req, res) => {
   try {
     const updated = await prisma.product.update({
       where: { id: Number(req.params.productId) },
@@ -57,7 +65,7 @@ app.patch("/products/:productId", async (req, res) => {
 });
 
 // DELETE /orders/:orderId
-app.delete("/orders/:orderId", async (req, res) => {
+app.delete("/orders/:orderId", requireAdmin, async (req, res) => {
   try {
     await prisma.orderItem.deleteMany({ where: { orderId: Number(req.params.orderId) } });
     const deleted = await prisma.order.delete({ where: { id: Number(req.params.orderId) } });
