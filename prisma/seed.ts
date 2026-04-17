@@ -12,10 +12,10 @@ async function seed() {
 
   // Products
   const headphones = await prisma.product.create({
-    data: { name: "Headphones", price: 599, stock: 25, categoryId: electronics.id },
+    data: { name: "Headphones", price: 599, stock: 25, categories: { connect: [{ id: electronics.id }] } },
   });
   const novel = await prisma.product.create({
-    data: { name: "Novel", price: 149, stock: 100, categoryId: books.id },
+    data: { name: "Novel", price: 149, stock: 100, categories: { connect: [{ id: books.id }] } },
   });
 
   // Customers

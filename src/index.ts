@@ -33,9 +33,9 @@ app.get("/products", async (req, res) => {
           gte: minPrice ? Number(minPrice) : undefined,
           lte: maxPrice ? Number(maxPrice) : undefined,
         },
-        category: category ? { name: { equals: String(category) } } : undefined,
+        categories: category ? { some: { name: { equals: String(category) } } } : undefined,
       },
-      include: { category: true },
+      include: { categories: true },
     });
     res.json(products);
   } catch (error) {

@@ -28,9 +28,8 @@ model Product {
   name       String
   price      Float
   stock      Int
-  categoryId Int?
   createdAt  DateTime    @default(now())
-  category   Category?   @relation(fields: [categoryId], references: [id])
+  categories Category[]
   orderItems OrderItem[]
 }
 
